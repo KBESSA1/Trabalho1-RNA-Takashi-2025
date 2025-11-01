@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.ipynb_checkpoints
+data/
+outputs/
+*.log
+# manter artefatos finais (figuras/PDFs), mas não checkpoints:
+!outputs_final_pt/*.png
+!outputs_final_pt/*.pdf
+outputs_final_pt/*.pth

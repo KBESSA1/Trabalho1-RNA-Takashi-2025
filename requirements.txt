@@ -1,0 +1,22 @@
+# Framework Principal
+torch==2.3.1
+torchvision==0.18.1
+torchaudio==2.3.1
+
+# Modelos (Conforme enunciado)
+timm==1.0.3
+
+# Métricas e Utilitários (Segundo o enunciado)
+scikit-learn==1.5.0
+
+# Plot de Gráficos (Conforme enunciado)
+matplotlib==3.9.0
+
+# Ambiente de Desenvolvimento
+jupyterlab==4.2.1
+
+# Utilitário para dados 
+pandas==2.2.2
+
+# Utilitário para visualização
+seaborn==0.13.2

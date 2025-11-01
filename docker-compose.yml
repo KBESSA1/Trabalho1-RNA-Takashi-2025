@@ -1,0 +1,47 @@
+# docker-compose.yml -> Notinhas:
+# Este arquivo define *como* vamos rodar o container
+# que foi definido no 'Dockerfile'.
+
+# (Define a versão do 'docker compose' que estamos usando)
+version: '3.8'
+
+# 'services' é a lista de containers que vamos rodar.
+# (No nosso caso, é só um, que vamos chamar de 'trabalho1-rna')
+services:
+  trabalho1-rna:
+    # 1. Construção (Build)
+    # Diz ao Compose para *construir* a imagem usando o 'Dockerfile'
+    # que está nesta mesma pasta (contexto '.').
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # 2. Nome do Container
+    # Um nome fácil para eu achar o container no Docker Desktop.
+    container_name: trabalho1-rna-container
+
+    # 3. Volumes (O Mapeamento de Pastas)
+    # Esta é a parte mais importante.
+    # É o "espelho" que conecta a pasta do projeto no meu Windows
+    # com a pasta '/app' dentro do container.
+    # (Tudo que eu salvar no VSCode, aparece lá. Tudo que o container criar,
+    # aparece aqui. É o que permite o 'hot-reload' do código).
+    volumes:
+      - .:/app  # (Mapeia a pasta atual '.' para '/app' no container)
+
+    # 4. Configuração da GPU (NVIDIA 4070)
+    # Isso que ativa a placa de vídeo dentro do container.
+    # Sem isso, ele rodaria só na CPU.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    # 5. Configurações de Execução
+    # (shm_size: Aumenta a memória compartilhada, bom para o PyTorch)
+    # (tty: true: Mantém o terminal 'ligado', necessário para o 'sleep infinity')
+    shm_size: '16g' # (Coloquei metade da minha RAM, 16GB, é ótimo para dataloaders)
+    tty: true
