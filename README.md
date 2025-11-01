@@ -1,32 +1,35 @@
-CIFAR-100 — coarse20, fine100 e multihead (100 + 10)
+Trabalho – CIFAR-100 (coarse20, fine100 e multihead 100+10)
 
-Trabalho da disciplina usando MobileNetV3 Small (torchvision, < 10M parâmetros).
-Treinei três variações:
-- coarse20: 20 superclasses
-- fine100: 100 classes
-- multihead: duas cabeças após o flatten (100 classes e 10 superclasses). A loss final soma as duas cross-entropies.
+Resumo
+- Treinei três variações usando MobileNetV3 Small (torchvision, <10M params):
+  1) 20 superclasses (coarse20)
+  2) 100 classes (fine100)
+  3) Multihead: duas cabeças após o flatten (100 classes e 10 superclasses), loss = CE_fine + CE_coarse.
+- Dataset dividido em treino/validação/teste (40k/10k/10k).
+- Curvas de loss por época (train/val).
+- Checkpoint automático no melhor val_loss + early stop.
+- Classification report (sklearn) ao final.
 
-Como rodar (exemplos):
-- 100 classes:        python train_cifar100.py --model-type fine100 --epochs 60 --patience 8 --batch-size 128
-- 20 superclasses:    python train_cifar100.py --model-type coarse20 --epochs 60 --patience 8 --batch-size 128
-- Multihead 100+10:   python train_cifar100.py --model-type multihead --ten-superclasses-subset --epochs 60 --patience 8 --batch-size 128
+Como rodar (exemplos)
+# 100 classes
+python train_cifar100.py --model-type fine100  --epochs 60 --patience 8 --batch-size 128
 
-Saídas (organizadas na entrega):
-- entrega_coarse20_pt/:     arch_block_coarse20.png, loss_coarse20.png, cm_coarse20.png, best_coarse20.pth, report_coarse20.txt
-- entrega_fine100_pt/:      arch_block_fine100.png, loss_fine100.png, cm_fine100.png, best_fine100.pth, report_fine100.txt
-- entrega_multi_100+10_pt/: arch_block_multihead_100+10.png, loss_multi_100+coarse10.png, cm_multi_fine100.png, cm_multi_coarse10.png, best_multi_100+coarse10.pth, report_multi_100+coarse10.txt
+# 20 superclasses
+python train_cifar100.py --model-type coarse20 --epochs 60 --patience 8 --batch-size 128
 
-Atendido no enunciado:
-- split treino/val/teste
-- curvas de loss (treino/val)
-- checkpoint no melhor val-loss
-- early stopping
-- classification_report final
-- multihead 100+10 somando duas losses
-- backbone < 10M parâmetros
+# Multihead (100 + 10 superclasses)
+python modelo_multihead_10_SC_100_SC.py --epochs 60 --patience 8 --batch-size 128
 
-Visualizar rápido (opcional):
-- python -m http.server 8000
-- abrir no navegador: /entrega_coarse20_pt/, /entrega_fine100_pt/, /entrega_multi_100+10_pt/
+Saídas principais (ver pasta outputs/ ou outputs_final_pt/)
+- Curvas: loss_fine100.png, loss_coarse20.png, loss_multi_100+coarse10.png
+- Relatórios: report_fine100.txt, report_coarse20.txt, report_multi_100+coarse10.txt
+- Checkpoints: best_fine100.pth, best_coarse20.pth, best_multi_100+coarse10.pth
+- Matrizes de confusão: cm_fine100.png, cm_coarse20.png, cm_multi_fine100.png, cm_multi_coarse10.png
 
-Autor: Rodrigo KBESSA
+Observações
+- Multihead usa MobileNetV3 Small com duas MLPs paralelas no topo (fine=100, coarse=10).
+- Otimizador: Adam, CE loss; scheduler opcional.
+- Treino feito em CUDA quando disponível.
+
+Autor
+Rodrigo KBESSA
