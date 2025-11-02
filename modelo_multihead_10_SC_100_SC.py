@@ -1,3 +1,4 @@
+import torch
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -9,7 +10,6 @@
 import os, copy, argparse
 from typing import List, Tuple
 import numpy as np
-import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, random_split, Dataset
@@ -135,7 +135,14 @@ class MultiHeadModel(nn.Module):
         # Descobrir automaticamente a dimensionalidade após avgpool/flatten
         with torch.no_grad():
             dummy = torch.zeros(1, 3, 32, 32)
-            f = self.features(dummy)
+            was_training = self.features.training
+
+            self.features.eval()
+            with torch.no_grad():
+
+                f = self.features(dummy)
+
+            if was_training: self.features.train(True)
             f = self.avgpool(f)
             f = self.flatten(f)
             in_features = f.shape[1]  # tipicamente 576 para 32x32
@@ -280,8 +287,8 @@ def main():
     target_names_f = [f"class_{i}" for i in range(100)]
     target_names_c = [f"super_{i}" for i in range(num_coarse)]
 
-    rep_f = classification_report(yf_t, yf_p, target_names=target_names_f, zero_division=0)
-    rep_c = classification_report(yc_t, yc_p, target_names=target_names_c, zero_division=0)
+    rep_f = classification_report(yf_t, yf_p, labels=sorted(set(yf_t)), zero_division=0)
+    rep_c = classification_report(yc_t, yc_p, labels=sorted(set(yc_t)), zero_division=0)
 
     with open(repf, "w", encoding="utf-8") as f:
         f.write("=== Classification Report — 100 classes ===\n")
